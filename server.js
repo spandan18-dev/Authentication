@@ -1,6 +1,6 @@
 import app from './src/app.js';
 import config from './src/config/config.js'
-import connectdb from './src/config/db.js'
+import connectdb from './src/config/database.js'
 
 
 connectdb().then(()=>{
