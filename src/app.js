@@ -5,5 +5,10 @@ const app  = express();
 app.use(express.json());
 app.use(morgan("dev"));
 
+// Routes
+import authRouter from '../src/routes/user.routes.js'
+
+//api
+app.use('/api/auth',authRouter);
 
 export default app;
