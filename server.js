@@ -1,12 +1,12 @@
 import app from './src/app.js';
-import {port} from './src/config/config.js'
+import config from './src/config/config.js'
 import connectdb from './src/config/db.js'
 
 
 connectdb().then(()=>{
-    app.listen(port,()=>{
+    app.listen(config.port,()=>{
         try {
-            console.log(`server up! http://localhost:${port}`)
+            console.log(`server up! http://localhost:${config.port}`)
         } catch (error) {
             console.log(error);
             process.exit(1);

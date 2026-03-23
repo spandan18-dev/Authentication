@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import {dburl} from '../config/config.js';
+import config from '../config/config.js';
 
-const connectdb = async ()=>{
+async function connectdb() {
     try {
-        await mongoose.connect(dburl);
+        await mongoose.connect(config.dburl);
         console.log("Db connected...")
     } catch (error) {
         console.error(error);
@@ -11,5 +11,7 @@ const connectdb = async ()=>{
         process.exit(1);
     }
 }
+   
 
-export default connectdb
+
+export default connectdb;
