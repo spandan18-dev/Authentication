@@ -2,23 +2,25 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
 
-    username :{
-        typr : String,
-        required : [true,"All fields are required"],
-        unique : [true,"username must be unique"]
+    username: {
+        type: String,
+        required: [true, "Username is required"],
+        unique: true
     },
-    email :{
-        typr : String,
-        required : [true,"All fields are required"],
-        unique : [true,"username must be unique"]
+
+    email: {
+        type: String,
+        required: [true, "Email is required"],
+        unique: true
     },
-    password :{
-        type : String,
-        required : [true ,"All fiels are required"]
+
+    password: {
+        type: String,
+        required: [true, "Password is required"]
     }
 
 });
 
-const usermodel = mongoose.model("User",userSchema);
+const usermodel = mongoose.model("User", userSchema);
 
 export default usermodel;
