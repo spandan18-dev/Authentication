@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import config from '../config/config.js';
 import jsonwebtoken from 'jsonwebtoken';
 
-async  function regester (req,res){
+export async  function regester (req,res){
     try{
         const {username,email,password} = req.body;
         if(!username || !email || !password){
@@ -31,14 +31,29 @@ async  function regester (req,res){
             password : hashPassword
         });
 
-        const token = await jsonwebtoken.sign({
+        const accesstoken = await jsonwebtoken.sign({
             id:user._id,
             email:user.email
             },config.jwtkey,
             {
-                expiresIn :"1d"
+                expiresIn :"15m"
             }
         );
+        const refrestoken = await jsonwebtoken.sign({
+            id:user._id,
+            email:user.email
+            },config.jwtkey,
+            {
+                expiresIn :"7d"
+            }
+        );
+
+        res.cookie("RefershToken",refrestoken,{
+            httpOnly : true,
+            secure : true,
+            sameSite : "strict",
+            maxAge : 7 * 24 * 60 * 60 * 1000
+        })
 
         res.status(201).json({
             message : "User Regestered sucesfully",
@@ -46,7 +61,7 @@ async  function regester (req,res){
                 username : user.username,
                 email : user.email
             },
-            Token : token
+            r : accesstoken
         })
 
 
@@ -56,9 +71,45 @@ async  function regester (req,res){
             message : "Internal Server error , Try again Leter",
         })
     }
-}
+};
 
+export async function refreshToken (req,res) {
+    const refreshToken = req.cookies?.RefershToken;
 
-export {
-    regester
+    if(!refreshToken){
+        return res.status(404).json({
+            message : "Token not fount"
+        })
+    }
+
+    const decoded = await jsonwebtoken.verify(refreshToken,config.jwtkey);
+
+    const accesstoken = await jsonwebtoken.sign({
+            id:decoded._id,
+            email:decoded.email
+            },config.jwtkey,
+            {
+                expiresIn :"15m"
+            }
+    );
+
+    const newRefreshToken = await jsonwebtoken.sign({
+        id:decoded._id,
+        email : decoded.email
+    },config.jwtkey,{
+        expiresIn :"7d"
+    })
+
+    res.cookie("RefershToken",newRefreshToken,{
+        httpOnly:true,
+        secure:true,
+        sameSite :"strict",
+        maxAge : 7 * 24 * 60 * 60 *1000
+    });
+
+    res.status(201).json({
+        message : "Access token generated sucesfully...",
+        accessToken : accesstoken
+    })
+    
 }
